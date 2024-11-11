@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Jogo da Cobrinha com Perguntas de Lógica</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="startScreen">
+        <h1>Jogo da Cobrinha</h1>
+        <button id="startButton">Começar</button>
+        <button id="instructionsButton">Como Jogar</button>
+    </div>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <div id="quizModal" class="modal">
+        <div class="modal-content">
+            <p id="question"></p>
+            <input type="text" id="answer" placeholder="Sua resposta">
+            <button id="submitAnswer">Enviar</button>
+        </div>
+    </div>
+    <div id="instructionsModal" class="modal">
+        <div class="modal-content">
+            <h2>Como Jogar</h2>
+            <p>Use as teclas W, A, S, D para mover a cobra.</p>
+            <p>Cada vez que comer uma maçã, responda a uma pergunta de lógica proposicional.</p>
+            <p>Se acertar, a cobra cresce; se errar, a cobra diminui.</p>
+            <p>O jogo termina se a cobra colidir com si mesma ou se perder todos os segmentos.</p>
+            <button id="closeInstructions">Fechar</button>
+        </div>
+    </div>
+    <div id="gameOverScreen" class="modal">
+        <div class="modal-content">
+            <h2>Game Over</h2>
+            <p>Sua pontuação: <span id="finalScore"></span></p>
+            <input type="text" id="playerName" placeholder="Seu nome">
+            <button id="saveScoreButton">Salvar Pontuação</button>
+            <button id="restartButton">Recomeçar</button>
+            <h3>Melhores Pontuações:</h3>
+            <ul id="highScoresList"></ul>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
