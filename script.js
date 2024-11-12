@@ -9,6 +9,7 @@ let score = 0;
 let quizCount = 0;
 let game;
 let highScores = [];
+let growSnake = false; 
 
 const quizModal = document.getElementById('quizModal');
 const questionElem = document.getElementById('question');
@@ -24,6 +25,29 @@ const playerNameInput = document.getElementById('playerName');
 const saveScoreButton = document.getElementById('saveScoreButton');
 const restartButton = document.getElementById('restartButton');
 const highScoresList = document.getElementById('highScoresList');
+
+const winScreen = document.getElementById('winScreen');
+const restartButtonWin = document.getElementById('restartButtonWin');
+
+const questions = [
+    { q: "Qual é o valor lógico de 'V ∧ F'?", a: "falso" },
+    { q: "Qual é o valor lógico de 'V ∨ F'?", a: "verdadeiro" },
+    { q: "O que resulta da negação de 'Verdadeiro'?", a: "falso" },
+    { q: "Complete: 'A ⇒ B' é falso apenas quando A é __ e B é __.", a: "verdadeiro falso" },
+    { q: "Qual é o valor de 'A ⇔ B' quando A é F e B é F?", a: "verdadeiro" },
+    { q: "Se '¬A ∨ B' é verdadeiro, e A é verdadeiro, qual é o valor de B?", a: "verdadeiro" },
+    { q: "Qual é o resultado de '¬(A ∧ B)' em termos de '¬A' e '¬B'?", a: "~a ∨ ~b" },
+    { q: "Quantas linhas tem a tabela verdade de uma proposição com 3 variáveis?", a: "8" },
+    { q: "A negação de 'A ⇒ B' é equivalente a qual expressão?", a: "a ^ ~b" },
+    { q: "Se a tabela verdade de uma proposição tem todas as entradas verdadeiras, como ela é chamada?", a: "tautologia" }
+];
+
+document.addEventListener('keydown', directionEvent);
+submitAnswer.addEventListener('click', submitQuizAnswer);
+startButton.addEventListener('click', startGame);
+restartButton.addEventListener('click', restartGame);
+restartButtonWin.addEventListener('click', restartGame);
+saveScoreButton.addEventListener('click', saveHighScore);
 
 const instructionsButton = document.getElementById('instructionsButton');
 const instructionsModal = document.getElementById('instructionsModal');
@@ -43,30 +67,10 @@ window.addEventListener('click', (event) => {
     }
 });
 
-
-// Novas perguntas focadas em proposições lógicas e tabelas verdade
-const questions = [
-    { q: "Qual é o valor lógico de 'V ∧ F'?", a: "Falso" },
-    { q: "Qual é o valor lógico de 'V ∨ F'?", a: "Verdadeiro" },
-    { q: "O que resulta da negação de 'Verdadeiro'?", a: "Falso" },
-    { q: "Complete: 'A ⇒ B' é falso apenas quando A é __ e B é __.", a: "Verdadeiro Falso" },
-    { q: "Qual é a tabela verdade da bicondicional 'A ⇔ B' quando A é F e B é F?", a: "Verdadeiro" },
-    { q: "Se '¬A ∨ B' é verdadeiro, e A é verdadeiro, qual é o valor de B?", a: "Verdadeiro" },
-    { q: "Qual é o resultado de '¬(A ∧ B)' em termos de '¬A' e '¬B'?", a: "¬A ∨ ¬B" },
-    { q: "Quantas linhas tem a tabela verdade de uma proposição com 3 variáveis?", a: "8" },
-    { q: "A negação de 'A ⇒ B' é logicamente equivalente a qual expressão?", a: "A ∧ ¬B" },
-    { q: "Se a tabela verdade de uma proposição tem todas as entradas verdadeiras, como ela é chamada?", a: "Tautologia" }
-];
-
-document.addEventListener('keydown', directionEvent);
-submitAnswer.addEventListener('click', submitQuizAnswer);
-startButton.addEventListener('click', startGame);
-restartButton.addEventListener('click', restartGame);
-saveScoreButton.addEventListener('click', saveHighScore);
-
 function startGame() {
     startScreen.style.display = 'none';
-    gameOverScreen.style.display = 'none'; // Garantir que a tela de game over esteja oculta
+    gameOverScreen.style.display = 'none';
+    winScreen.style.display = 'none';
     canvas.style.display = 'block';
     initGame();
     game = setInterval(draw, 100);
@@ -75,17 +79,17 @@ function startGame() {
 function initGame() {
     snake = [];
     snake[0] = { x: 9 * box, y: 9 * box };
-    direction = 'RIGHT'; // Definir a direção inicial
+    direction = 'RIGHT'; 
     generateFood();
     score = 0;
     quizCount = 0;
-    canvas.style.display = 'block'; // Garantir que o canvas esteja visível
+    growSnake = false;
 }
 
 function restartGame() {
     playerNameInput.value = '';
-    saveScoreButton.disabled = false; // Habilitar o botão de salvar pontuação
-    startGame(); // Reiniciar o jogo
+    saveScoreButton.disabled = false;
+    startGame();
 }
 
 function directionEvent(event) {
@@ -102,7 +106,7 @@ function directionEvent(event) {
 }
 
 function collision(head, array) {
-    for (let i = 0; i < array.length; i++) {
+    for (let i = 1; i < array.length; i++) { 
         if (head.x === array[i].x && head.y === array[i].y) {
             return true;
         }
@@ -111,24 +115,18 @@ function collision(head, array) {
 }
 
 function generateFood() {
-    food = {
-        x: Math.floor(Math.random() * (canvas.width / box)) * box,
-        y: Math.floor(Math.random() * (canvas.height / box)) * box
-    };
-    // Garantir que a comida não apareça em cima da cobra
-    for (let i = 0; i < snake.length; i++) {
-        if (food.x === snake[i].x && food.y === snake[i].y) {
-            generateFood();
-            break;
-        }
-    }
+    do {
+        food = {
+            x: Math.floor(Math.random() * (canvas.width / box)) * box,
+            y: Math.floor(Math.random() * (canvas.height / box)) * box
+        };
+    } while (snake.some(segment => segment.x === food.x && segment.y === food.y));
 }
 
 function draw() {
     ctx.fillStyle = "#111";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Desenhar a cobra
     for(let i = 0; i < snake.length; i++){
         ctx.fillStyle = (i === 0) ? "green" : "lightgreen";
         ctx.fillRect(snake[i].x, snake[i].y, box, box);
@@ -136,7 +134,6 @@ function draw() {
         ctx.strokeRect(snake[i].x, snake[i].y, box, box);
     }
 
-    // Desenhar a comida
     ctx.fillStyle = "red";
     ctx.fillRect(food.x, food.y, box, box);
 
@@ -144,11 +141,10 @@ function draw() {
     let snakeY = snake[0].y;
 
     if( direction === 'LEFT') snakeX -= box;
-    if( direction === 'UP') snakeY -= box;
-    if( direction === 'RIGHT') snakeX += box;
-    if( direction === 'DOWN') snakeY += box;
+    else if( direction === 'UP') snakeY -= box;
+    else if( direction === 'RIGHT') snakeX += box;
+    else if( direction === 'DOWN') snakeY += box;
 
-    // Teletransporte nas bordas
     if(snakeX < 0) snakeX = canvas.width - box;
     else if(snakeX >= canvas.width) snakeX = 0;
     if(snakeY < 0) snakeY = canvas.height - box;
@@ -156,7 +152,6 @@ function draw() {
 
     let newHead = { x: snakeX, y: snakeY };
 
-    // Verificar colisão com o corpo
     if(collision(newHead, snake)){
         endGame();
         return;
@@ -168,19 +163,26 @@ function draw() {
         quizCount++;
         if (quizCount <= 10) {
             openQuizModal(quizCount - 1);
+            return; 
         } else {
-            endGame();
+            winGame();
+            return;
         }
-        generateFood();
+    }
+
+    if (!growSnake) {
+        if (snake.length > 1) {
+            snake.pop();
+        }
     } else {
-        snake.pop();
+        growSnake = false; 
     }
 }
 
 function openQuizModal(index) {
     clearInterval(game);
     questionElem.textContent = questions[index].q;
-    answerInput.value = ''; // Limpar o campo de resposta
+    answerInput.value = '';
     quizModal.style.display = 'block';
 }
 
@@ -190,22 +192,25 @@ function submitQuizAnswer() {
 
     if(userAnswer === correctAnswer){
         score++;
-        // Adicionar um novo segmento à cobra
-        snake.push({});
+        growSnake = true; 
     } else {
-        // Remover um segmento da cobra
         if (snake.length > 1) {
             snake.pop();
         } else {
-            // Se a cobra só tem um segmento, o jogo termina
             endGame();
             return;
         }
     }
 
+    generateFood(); 
     answerInput.value = '';
     quizModal.style.display = 'none';
-    game = setInterval(draw, 100);
+
+    if(score >= 10) {
+        winGame();
+    } else {
+        game = setInterval(draw, 100);
+    }
 }
 
 function endGame() {
@@ -215,6 +220,12 @@ function endGame() {
     loadHighScores();
     displayHighScores();
     gameOverScreen.style.display = 'block';
+}
+
+function winGame() {
+    clearInterval(game);
+    canvas.style.display = 'none';
+    winScreen.style.display = 'block';
 }
 
 function saveHighScore() {
@@ -248,8 +259,6 @@ function displayHighScores() {
     });
 }
 
-// Impede que o botão seja clicado mais de uma vez
 playerNameInput.addEventListener('input', () => {
     saveScoreButton.disabled = false;
 });
-

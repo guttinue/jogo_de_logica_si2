@@ -23,6 +23,26 @@ body {
     cursor: pointer;
 }
 
+#winScreen .modal-content {
+    background-color: #fff;
+    color: #000;
+    margin: 15% auto;
+    padding: 20px;
+    width: 80%;
+    max-width: 400px;
+    text-align: center;
+}
+
+#winScreen h2 {
+    margin-top: 0;
+}
+
+#restartButtonWin {
+    padding: 10px 20px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
 .modal {
     display: none;
     position: fixed;
