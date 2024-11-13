@@ -36,12 +36,12 @@ let pontuacoesAltas = [];
 let pausado;
 
 const perguntas = [
-    { q: "Qual é o valor lógico de 'V ∧ F'?", a: "falso" },
-    { q: "Qual é o valor lógico de 'V ∨ F'?", a: "verdadeiro" },
+    { q: "Qual é o valor lógico de 'V ∧ F'?", a: "f" },
+    { q: "Qual é o valor lógico de 'V ∨ F'?", a: "v" },
     { q: "O que resulta da negação de 'Verdadeiro'?", a: "falso" },
-    { q: "Complete: 'A ⇒ B' é falso apenas quando A é __ e B é __.", a: "verdadeiro falso" },
-    { q: "Qual é o valor de 'A ⇔ B' quando A é F e B é F?", a: "verdadeiro" },
-    { q: "Se '¬A ∨ B' é verdadeiro, e A é verdadeiro, qual é o valor de B?", a: "verdadeiro" },
+    { q: "Complete: 'A ⇒ B' é falso apenas quando A é __ e B é __.", a: "v f" },
+    { q: "Qual é o valor de 'A ⇔ B' quando A é F e B é F?", a: "v" },
+    { q: "Se '¬A ∨ B' é verdadeiro, e A é verdadeiro, qual é o valor de B?", a: "v" },
     { q: "Qual é o resultado de '¬(A ∧ B)' em termos de '¬A' e '¬B'?", a: "¬a ∨ ¬b" },
     { q: "Quantas linhas tem a tabela verdade de uma proposição com 3 variáveis?", a: "8" },
     { q: "A negação de 'A ⇒ B' é equivalente a qual expressão?", a: "a ∧ ¬b" },
